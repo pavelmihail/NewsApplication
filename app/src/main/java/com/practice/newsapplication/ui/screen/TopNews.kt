@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.practice.newsapplication.MockData
+import com.practice.newsapplication.MockData.getTimeAgo
 import com.practice.newsapplication.NewsData
 
 @Composable
@@ -57,8 +58,9 @@ fun TopNewsItem(newsData: NewsData, onNewsClick: ()-> Unit = {}) {
                 .padding(top = 16.dp, start = 16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
+            //display how much time ago the article was published
             Text(
-                text = newsData.publishedAt,
+                text = MockData.stringToDate(newsData.publishedAt).getTimeAgo(),
                 color = Color.White,
                 fontWeight = FontWeight.SemiBold
             )

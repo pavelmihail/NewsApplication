@@ -1,5 +1,10 @@
 package com.practice.newsapplication
 
+import android.os.Build
+import android.util.Log
+import java.text.SimpleDateFormat
+import java.util.*
+
 object MockData {
     val topNewsList = listOf<NewsData>(
         NewsData(
@@ -66,7 +71,58 @@ object MockData {
         )
     )
 
-    fun getNews(newsId: Int?):NewsData{
-        return topNewsList.first{it.id == newsId}
+    fun getNews(newsId: Int?): NewsData {
+        return topNewsList.first { it.id == newsId }
     }
+
+    fun Date.getTimeAgo(): String {
+        val calendar = Calendar.getInstance()
+        calendar.time = this
+
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+
+        val currentCaledar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = calendar.get(Calendar.MINUTE)
+
+        return if (year < currentYear) {
+            val interval = currentYear - year
+            if (interval == 1) "$interval year ago" else "$interval years ago"
+        } else if (month < currentMonth) {
+            val interval = currentMonth - month
+            if (interval == 1) "$interval month ago" else "$interval months ago"
+        } else if (day < currentDay) {
+            val interval = currentDay - day
+            if (interval == 1) "$interval day ago" else "$interval days ago"
+        } else if (hour < currentHour) {
+            val interval = currentHour - hour
+            if (interval == 1) "$interval hour ago" else "$interval hours ago"
+        } else if (minute < currentMinute) {
+            val interval = currentMinute - minute
+            if (interval == 1) "$interval minute ago" else "$interval minutes ago"
+        } else {
+            "a moment ago"
+        }
+    }
+
+    //this function transform a string into a date object depend on the API of the device
+    fun stringToDate(publishedAt: String): Date {
+        val date =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH).parse(publishedAt)
+            } else {
+                java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH).parse(publishedAt)
+            }
+        Log.d("published","$date")
+        return date
+    }
+
 }
+
