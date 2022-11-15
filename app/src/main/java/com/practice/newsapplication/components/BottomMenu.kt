@@ -16,7 +16,7 @@ import com.practice.newsapplication.R
 @Composable
 fun BottomMenu(navController: NavController) {
     val menuItem =
-        listOf(BottomMenuScreen.TopNew, BottomMenuScreen.Categories, BottomMenuScreen.Sources)
+        listOf(BottomMenuScreen.TopNews, BottomMenuScreen.Categories, BottomMenuScreen.Sources)
 
     BottomNavigation(contentColor = colorResource(id = R.color.white)) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()

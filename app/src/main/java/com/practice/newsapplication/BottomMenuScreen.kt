@@ -11,7 +11,7 @@ sealed class BottomMenuScreen(
     val icon: ImageVector,
     val title: String
 ) {
-    object TopNew : BottomMenuScreen("top news", icon = Icons.Outlined.Home, title = "Top News")
+    object TopNews : BottomMenuScreen("top news", icon = Icons.Outlined.Home, title = "Top News")
     object Categories :
         BottomMenuScreen("categories", icon = Icons.Outlined.Category, title = "Categories")
     object Sources : BottomMenuScreen("sources", icon = Icons.Outlined.Source, title = "Sources")
