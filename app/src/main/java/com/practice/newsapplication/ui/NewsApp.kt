@@ -48,31 +48,44 @@ fun Navigation(
     val articles = newsManager.newsResponse.value.articles
     Log.d("news", "$articles")
 
-    articles?.let{
+    articles?.let {
         //navigation composable component
-        NavHost(navController = navController, startDestination = BottomMenuScreen.TopNews.route, modifier = Modifier.padding(paddingValues = paddingValues)) {
-            bottomNavigation(navController = navController, articles)
+        NavHost(
+            navController = navController,
+            startDestination = BottomMenuScreen.TopNews.route,
+            modifier = Modifier.padding(paddingValues = paddingValues)
+        ) {
+            bottomNavigation(
+                navController = navController,
+                articles = articles,
+                newsManager = newsManager
+            )
             composable(
                 "DetailScreen/{index}",
                 arguments = listOf(navArgument("index") { type = NavType.IntType })
             ) { navBackStackEntry ->
                 val index = navBackStackEntry.arguments?.getInt("index")
-                index?.let{
+                index?.let {
                     val article = articles[index]
                     DetailScreen(scrollState, article, navController)
                 }
-
             }
         }
     }
 }
 
-fun NavGraphBuilder.bottomNavigation(navController: NavController, articles:List<TopNewsArticles>) {
+fun NavGraphBuilder.bottomNavigation(
+    navController: NavController,
+    articles: List<TopNewsArticles>,
+    newsManager: NewsManager
+) {
     composable(BottomMenuScreen.TopNews.route) {
         TopNews(navController = navController, articles = articles)
     }
     composable(BottomMenuScreen.Categories.route) {
-        Categories()
+        Categories(newsManager = newsManager, onFetchCategory = {
+            newsManager.onSelectedCategoryChanged(it)
+        })
     }
     composable(BottomMenuScreen.Sources.route) {
         Sources()
