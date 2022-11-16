@@ -62,14 +62,14 @@ fun TopNewsItem(article: TopNewsArticles, onNewsClick: () -> Unit = {}) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             //display how much time ago the article was published
-            Text(
-                text = MockData.stringToDate(article.publishedAt!!).getTimeAgo(),
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold
-            )
+//            Text(
+//                text = MockData.stringToDate(article.publishedAt!!).getTimeAgo(),
+//                color = Color.White,
+//                fontWeight = FontWeight.SemiBold
+//            )
             Spacer(modifier = Modifier.height(80.dp))
             Text(
-                text = article.title!!,
+                text = article.title ?: "Not Available",
                 color = Color.White,
                 fontWeight = FontWeight.SemiBold
             )

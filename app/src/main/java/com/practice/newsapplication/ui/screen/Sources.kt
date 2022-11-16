@@ -27,22 +27,23 @@ import com.practice.newsapplication.BottomMenuScreen
 import com.practice.newsapplication.R
 import com.practice.newsapplication.models.TopNewsArticles
 import com.practice.newsapplication.network.NewsManager
+import com.practice.newsapplication.ui.MainViewModel
 
 @Composable
-fun Sources(newsManager: NewsManager) {
+fun Sources(viewModel: MainViewModel) {
 
     val items = listOf(
         "TechCrunch" to "techcrunch",
         "TalckSport" to "talcksport",
         "Business Insider" to "business",
         "Reuters" to "reuters",
-        "Politigo" to "politigo",
-        "TheVerge" to "theverge"
+        "Politico" to "politico",
+        "TheVerge" to "the-verge"
     )
 
     Scaffold(topBar = {
         TopAppBar(
-            title = { Text(text = "${newsManager.sourceName.value} Source") },
+            title = { Text(text = "${viewModel.sourceName.collectAsState().value} Source") },
             actions = {
                 var menuExanded by remember { mutableStateOf(false) }
                 IconButton(onClick = { menuExanded = true }) {
@@ -54,7 +55,8 @@ fun Sources(newsManager: NewsManager) {
                     }) {
                         items.forEach {
                             DropdownMenuItem(onClick = {
-                                newsManager.sourceName.value = it.second
+                                viewModel.sourceName.value = it.second
+                                viewModel.getArticleBySource
                                 menuExanded = false
                             }) {
                                 Text(it.first)
@@ -64,8 +66,8 @@ fun Sources(newsManager: NewsManager) {
                 }
             })
     }) {
-        newsManager.getArticleBySource()
-        val articles = newsManager.getArticleSource.value
+        viewModel.getArticleBySource()
+        val articles = viewModel.getArticleBySource.collectAsState().value
         SourceContent(article = articles.articles ?: listOf())
     }
 }

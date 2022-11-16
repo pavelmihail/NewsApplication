@@ -5,11 +5,13 @@ import androidx.compose.runtime.*
 import com.practice.newsapplication.models.ArticleCategory
 import com.practice.newsapplication.models.TopNewsResponse
 import com.practice.newsapplication.models.getArticleCategory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NewsManager {
+class NewsManager(private val service: NewsService) {
 
     private val _newsResponse = mutableStateOf(TopNewsResponse())
     val newsResponse: State<TopNewsResponse>
@@ -24,83 +26,26 @@ class NewsManager {
             _getArticleBySource
         }
 
+    val selectedCategory: MutableState<ArticleCategory?> = mutableStateOf(null)
 
-    private val _getArticleByCategory = mutableStateOf(TopNewsResponse())
-    val getArticleCategory: State<TopNewsResponse>
-        @Composable get() = remember {
-            _getArticleByCategory
-        }
+    suspend fun getArticles(country: String): TopNewsResponse
+    = withContext(Dispatchers.IO) {
 
-    val selectedCategory : MutableState<ArticleCategory?> = mutableStateOf(null)
-
-    init{
-        getArticles()
+        service.getTopArticles(country = country)
     }
 
-    private fun getArticles(){
-        val service = Api.retrofitService.getTopArticles("US")
-        service.enqueue(object  : Callback<TopNewsResponse> {
-            override fun onResponse(
-                call: Call<TopNewsResponse>,
-                response: Response<TopNewsResponse>
-            ) {
-                if(response.isSuccessful){
-                    _newsResponse.value = response.body()!!
-                    Log.d("news", "${_newsResponse.value}")
-                }else{
-                    Log.d("error", "${response.errorBody()}")
-                }
-            }
+    suspend fun getArticleByCategory(category: String) : TopNewsResponse
+    = withContext(Dispatchers.IO) {
 
-            override fun onFailure(call: Call<TopNewsResponse>, t: Throwable) {
-                Log.d("error", "${t.printStackTrace()}")
-            }
-        })
+        service.getArticlesByCategory(category = category)
     }
 
-    fun getArticleByCategory(category: String){
-        val service = Api.retrofitService.getArticlesByCategory(category)
-        service.enqueue(object  : Callback<TopNewsResponse> {
-            override fun onResponse(
-                call: Call<TopNewsResponse>,
-                response: Response<TopNewsResponse>
-            ) {
-                if(response.isSuccessful){
-                    _getArticleByCategory.value = response.body()!!
-                    Log.d("category", "${_getArticleByCategory.value}")
-                }else{
-                    Log.d("error", response.message())
-                }
-            }
+    suspend fun getArticleBySource(source: String): TopNewsResponse = withContext(Dispatchers.IO) {
 
-            override fun onFailure(call: Call<TopNewsResponse>, t: Throwable) {
-                Log.d("error", "${t.printStackTrace()}")
-            }
-        })
+        service.getArticlesBySources(source)
     }
 
-    fun getArticleBySource(){
-        val service = Api.retrofitService.getArticlesBySources(sourceName.value)
-        service.enqueue(object  : Callback<TopNewsResponse> {
-            override fun onResponse(
-                call: Call<TopNewsResponse>,
-                response: Response<TopNewsResponse>
-            ) {
-                if(response.isSuccessful){
-                    _getArticleBySource.value = response.body()!!
-                    Log.d("category", "${_getArticleBySource.value}")
-                }else{
-                    Log.d("error", response.message())
-                }
-            }
-
-            override fun onFailure(call: Call<TopNewsResponse>, t: Throwable) {
-                Log.d("error", "${t.printStackTrace()}")
-            }
-        })
-    }
-
-    fun onSelectedCategoryChanged(category: String){
+    fun onSelectedCategoryChanged(category: String) {
         val newCategory = getArticleCategory(category)
         selectedCategory.value = newCategory
     }
