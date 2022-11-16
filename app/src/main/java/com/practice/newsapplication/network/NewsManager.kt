@@ -17,6 +17,14 @@ class NewsManager {
             _newsResponse
         }
 
+    val sourceName = mutableStateOf("abc-news")
+    private val _getArticleBySource = mutableStateOf(TopNewsResponse())
+    val getArticleSource: State<TopNewsResponse>
+        @Composable get() = remember {
+            _getArticleBySource
+        }
+
+
     private val _getArticleByCategory = mutableStateOf(TopNewsResponse())
     val getArticleCategory: State<TopNewsResponse>
         @Composable get() = remember {
@@ -30,7 +38,7 @@ class NewsManager {
     }
 
     private fun getArticles(){
-        val service = Api.retrofitService.getTopArticles("US", Api.API_KEY)
+        val service = Api.retrofitService.getTopArticles("US")
         service.enqueue(object  : Callback<TopNewsResponse> {
             override fun onResponse(
                 call: Call<TopNewsResponse>,
@@ -51,7 +59,7 @@ class NewsManager {
     }
 
     fun getArticleByCategory(category: String){
-        val service = Api.retrofitService.getArticlesByCategory(category, Api.API_KEY)
+        val service = Api.retrofitService.getArticlesByCategory(category)
         service.enqueue(object  : Callback<TopNewsResponse> {
             override fun onResponse(
                 call: Call<TopNewsResponse>,
@@ -60,6 +68,27 @@ class NewsManager {
                 if(response.isSuccessful){
                     _getArticleByCategory.value = response.body()!!
                     Log.d("category", "${_getArticleByCategory.value}")
+                }else{
+                    Log.d("error", response.message())
+                }
+            }
+
+            override fun onFailure(call: Call<TopNewsResponse>, t: Throwable) {
+                Log.d("error", "${t.printStackTrace()}")
+            }
+        })
+    }
+
+    fun getArticleBySource(){
+        val service = Api.retrofitService.getArticlesBySources(sourceName.value)
+        service.enqueue(object  : Callback<TopNewsResponse> {
+            override fun onResponse(
+                call: Call<TopNewsResponse>,
+                response: Response<TopNewsResponse>
+            ) {
+                if(response.isSuccessful){
+                    _getArticleBySource.value = response.body()!!
+                    Log.d("category", "${_getArticleBySource.value}")
                 }else{
                     Log.d("error", response.message())
                 }
